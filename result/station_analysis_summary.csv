@@ -1,0 +1,5 @@
+metric,count
+Total unique station names,2303
+Total unique station IDs (using first ID),1854
+Stations with multiple IDs,1493
+Monthly activity columns,55
