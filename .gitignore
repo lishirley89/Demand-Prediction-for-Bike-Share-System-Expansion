@@ -5,7 +5,6 @@ env/
 
 # Data folders
 divvy/
-trip/
 
 # Python
 __pycache__/
