@@ -23,11 +23,14 @@ RESULT_DIR = PROJECT_ROOT / 'result'
 MASTER_STATIONS_CSV = RESULT_DIR / 'master_stations.csv'
 DISTANCE_MATRIX_CSV = RESULT_DIR / 'master_stations_dist_km.csv'
 
-# Distance ranges in kilometers
+# Distance ranges in kilometers (every 250 meters up to 1500m)
 DISTANCE_RANGES = {
-    '500m': (0, 0.5),
-    '1000m': (0.5, 1.0), 
-    '1500m': (1.0, 1.5)
+    '0_250m': (0.0, 0.25),
+    '250_500m': (0.25, 0.5),
+    '500_750m': (0.5, 0.75),
+    '750_1000m': (0.75, 1.0),
+    '1000_1250m': (1.0, 1.25),
+    '1250_1500m': (1.25, 1.5),
 }
 
 def load_data():
