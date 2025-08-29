@@ -40,7 +40,7 @@ BUS_STOPS_GEOJSON = DATA_DIR / 'CTA_BusStops_20250828.geojson'
 STREET_CENTERLINES_GEOJSON = DATA_DIR / 'transportation_streetcenterlines20250828.geojson'
 
 # Output file
-OUTPUT_CSV = RESULT_DIR / 'station_infrastructure_metrics.csv'
+OUTPUT_CSV = RESULT_DIR / 'master_station_infrastructure_metrics.csv'
 
 
 def load_geodata() -> tuple[gpd.GeoDataFrame, gpd.GeoDataFrame, gpd.GeoDataFrame, gpd.GeoDataFrame, gpd.GeoDataFrame]:
