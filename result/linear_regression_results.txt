@@ -1,0 +1,68 @@
+LINEAR REGRESSION MODELING RESULTS
+==================================================
+
+Modeling completed for 4 dependent variables
+Cross-validation: 5-fold
+Final feature count: 64
+Features used: n250, n500, n750, n1000, n1250, n1500, bike_route_length_m, street_length_m, rail_stops_count, bus_stops_count, poi_tourism, poi_education, poi_medical, poi_shop, poi_leisure, pct_white, pct_asian, pct_indian, pct_hawaiian, pct_two_or_more_races, pct_hispanic, pct_female, pct_young_adults_20_34, pct_zero_car_ownership, unemployment_rate, pct_drive_alone, pct_bike_to_work, pct_walk_to_work, per_capita_income, population_density_sq_meter, month_1, month_10, month_11, month_12, month_2, month_3, month_4, month_5, month_6, month_7, month_8, month_9, log_n250, log_n500, log_n750, log_n1000, log_n1250, log_n1500, log_rail_stops_count, log_poi_tourism, log_poi_education, log_poi_medical, log_poi_shop, log_pct_black, log_pct_asian, log_pct_indian, log_pct_hawaiian, log_pct_two_or_more_races, log_pct_hispanic, log_pct_female, log_unemployment_rate, log_pct_bike_to_work, log_pct_walk_to_work, log_population_density_sq_meter
+
+Results for cbike_start:
+  Training R²: 0.4832
+  Validation R²: 0.4863
+  Test R²: 0.3640
+  CV R²: 0.4825 ± 0.0041
+  Training RMSE: 11.3491
+  Validation RMSE: 11.0155
+  Test RMSE: 8.7154
+  CV RMSE: 11.2942 ± 0.3659
+  Training MAE: 6.5778
+  Validation MAE: 6.5134
+  Test MAE: 5.8910
+  CV MAE: 6.5714 ± 0.0300
+  Number of features: 64
+
+Results for cbike_end:
+  Training R²: 0.4731
+  Validation R²: 0.4754
+  Test R²: 0.3533
+  CV R²: 0.4722 ± 0.0054
+  Training RMSE: 11.4836
+  Validation RMSE: 11.1465
+  Test RMSE: 8.7841
+  CV RMSE: 11.4270 ± 0.4114
+  Training MAE: 6.6046
+  Validation MAE: 6.5278
+  Test MAE: 5.8982
+  CV MAE: 6.5948 ± 0.0373
+  Number of features: 64
+
+Results for ebike_start:
+  Training R²: 0.5400
+  Validation R²: 0.5442
+  Test R²: 0.5524
+  CV R²: 0.5395 ± 0.0055
+  Training RMSE: 5.7079
+  Validation RMSE: 5.5628
+  Test RMSE: 5.9905
+  CV RMSE: 5.6871 ± 0.0970
+  Training MAE: 3.5931
+  Validation MAE: 3.5304
+  Test MAE: 3.5377
+  CV MAE: 3.5841 ± 0.0309
+  Number of features: 64
+
+Results for ebike_end:
+  Training R²: 0.5390
+  Validation R²: 0.5431
+  Test R²: 0.5443
+  CV R²: 0.5384 ± 0.0050
+  Training RMSE: 5.6421
+  Validation RMSE: 5.5064
+  Test RMSE: 6.0124
+  CV RMSE: 5.6233 ± 0.0911
+  Training MAE: 3.5427
+  Validation MAE: 3.4800
+  Test MAE: 3.5186
+  CV MAE: 3.5338 ± 0.0316
+  Number of features: 64
+
