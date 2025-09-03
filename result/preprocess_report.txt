@@ -1,0 +1,13 @@
+Preprocessing Report
+====================
+
+Original training rows: 43131
+Removed training rows due to NaNs: 27
+Final training rows: 43104
+
+Original test rows: 15676
+Removed test rows due to NaNs: 12
+Final test rows: 15664
+
+Month one-hot columns (12): month_1, month_10, month_11, month_12, month_2, month_3, month_4, month_5, month_6, month_7, month_8, month_9
+Standardized columns (33): n250, n500, n750, n1000, n1250, n1500, bike_route_length_m, street_length_m, rail_stops_count, bus_stops_count, poi_tourism, poi_education, poi_medical, poi_shop, poi_leisure, pct_white, pct_black, pct_asian, pct_indian, pct_hawaiian, pct_two_or_more_races, pct_hispanic, pct_female, pct_young_adults_20_34, pct_zero_car_ownership, unemployment_rate, pct_bachelors_plus, pct_drive_alone, pct_bike_to_work, pct_walk_to_work, per_capita_income, population_density_sq_meter, housing_density_sq_meter
