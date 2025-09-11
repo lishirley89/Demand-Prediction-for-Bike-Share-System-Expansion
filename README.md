@@ -44,29 +44,6 @@ The models predict four key metrics:
 4. **Socioeconomic factors matter** - per capita income and demographic composition are highly influential
 5. **Infrastructure proximity** - nearby stations and transportation access significantly impact demand
 
-## Project Structure
-
-```
-parkchargebike/
-├── code/                          # Analysis scripts
-│   ├── process_divvy_data.py      # Process raw Divvy trip data
-│   ├── calc_station_poi.py        # Calculate POI counts around stations
-│   ├── calc_station_census.py     # Map stations to census tracts
-│   ├── calc_station_infrastructure.py # Calculate infrastructure metrics
-│   ├── model_linear_regression.py # Linear regression modeling
-│   ├── model_xgboost.ipynb        # XGBoost modeling notebook
-│   └── eda.ipynb                  # Exploratory data analysis
-├── data/                          # Raw data files
-│   ├── cook_county_census_tracts.geojson
-│   ├── CTA_*_Stations_*.geojson
-│   └── Bike_Routes_*.geojson
-├── result/                        # Processed data and results
-│   ├── *.csv                      # Processed datasets
-│   ├── *.html                     # Interactive error heatmaps
-│   └── *.joblib                   # Trained models
-└── trip/                          # Monthly trip summaries
-    └── *.csv                      # Station-level monthly data
-```
 
 ## Data Sources
 
@@ -85,7 +62,7 @@ parkchargebike/
 - **Station Density**: Count of nearby stations at 250m, 500m, 750m, 1000m, 1250m, 1500m intervals
 - **Buffer Analysis**: 500m buffers around each station for POI and infrastructure counts
 
-## 🎯 Feature Engineering
+## Feature Engineering
 
 ### Temporal Features
 - **Month indicators**: One-hot encoded seasonal patterns
@@ -104,7 +81,7 @@ parkchargebike/
 - **Log transformations**: Applied to skewed variables
 - **Standardization**: Z-score normalization for model training
 
-## 🤖 Model Development
+## Model Development
 
 ### Data Split
 - **Training**: January 2021 - July 2024 (43 months)
@@ -152,27 +129,6 @@ parkchargebike/
 - **Training Samples**: ~80,000 station-month observations
 - **Test Samples**: ~20,000 station-month observations
 
-## Available Results
-
-### Model Results
-- `best_models_summary.csv`: Linear regression model performance summary
-- `xgboost_results.csv`: XGBoost model performance summary
-- `feature_importance.csv`: Feature importance rankings for all models
-- `linear_regression_results.txt`: Detailed linear regression results
-
-### Trained Models
-- `xgboost_model_*.joblib`: Trained XGBoost models for each target variable
-
-### Error Analysis
-- `instance_errors_*.csv`: Individual prediction errors for each station
-- `error_heatmap_*.html`: Interactive spatial error visualizations
-- `shap_global_summary_*.csv`: SHAP feature importance analysis
-- `shap_worst_error_contrib_*.csv`: SHAP analysis for worst predictions
-
-### Data Files
-- `master_stations_*.csv`: Station-level processed datasets
-- `training_dataset.csv` / `test_dataset.csv`: Final modeling datasets
-- `monthly-active-stations.csv`: Station activity over time
 
 ## Technical Details
 
@@ -189,42 +145,6 @@ parkchargebike/
 - **Cross-validation** for robust performance estimation
 - **Feature selection** to reduce overfitting
 - **Hyperparameter tuning** via grid search
-
-## 🚀 Quick Start
-
-### Viewing Results
-1. **Interactive Error Maps**: Open any `error_heatmap_*.html` file in a web browser
-2. **Model Performance**: Check `result/xgboost_results.csv` for detailed metrics
-3. **Feature Importance**: Review `result/feature_importance.csv` for key predictors
-4. **Exploratory Analysis**: Run `code/eda.ipynb` for interactive data exploration
-
-### Using Trained Models
-```python
-import joblib
-import pandas as pd
-
-# Load a trained model
-model = joblib.load('result/xgboost_model_cbike_start.joblib')
-
-# Load preprocessed data
-data = pd.read_csv('result/test_dataset_preprocessed.csv')
-
-# Make predictions
-predictions = model.predict(data[feature_columns])
-```
-
-### Reproducing Results
-```bash
-# Run the complete pipeline
-python code/process_divvy_data.py
-python code/calc_station_poi.py
-python code/calc_station_census.py
-python code/calc_station_infrastructure.py
-python code/prepare_training_test_datasets.py
-python code/model_linear_regression.py
-# Run model_xgboost.ipynb for XGBoost models
-```
-
 
 ---
 
