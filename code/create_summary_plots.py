@@ -22,9 +22,9 @@ def create_model_performance_plot():
     # Prepare data
     models = ['Linear Regression', 'XGBoost']
     targets = ['cbike_start', 'cbike_end', 'ebike_start', 'ebike_end']
+    target_labels = ['Classic Bike Start', 'Classic Bike End', 'E-bike Start', 'E-bike End']
     
-    fig, axes = plt.subplots(2, 2, figsize=(15, 12))
-    axes = axes.flatten()
+    fig, axes = plt.subplots(1, 3, figsize=(18, 6))
     
     metrics = ['test_r2', 'test_rmse', 'test_mae']
     metric_names = ['R² Score', 'RMSE', 'MAE']
@@ -52,7 +52,7 @@ def create_model_performance_plot():
         ax.set_ylabel(metric_name)
         ax.set_title(f'Model Performance: {metric_name}')
         ax.set_xticks(x)
-        ax.set_xticklabels(targets, rotation=45)
+        ax.set_xticklabels(target_labels, rotation=45)
         ax.legend()
         ax.grid(True, alpha=0.3)
         
