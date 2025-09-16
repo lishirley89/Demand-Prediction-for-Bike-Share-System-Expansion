@@ -49,8 +49,25 @@ RESULT_DIR = PROJECT_ROOT / "result"
 # Optional S3 configuration via environment variables
 DATA_S3_PREFIX = os.getenv("DATA_S3_PREFIX", "")  # e.g., s3://lishirley89/data
 MODELS_S3_PREFIX = os.getenv("MODELS_S3_PREFIX", "")  # e.g., s3://lishirley89/models/xgboost/v1
-CACHE_DIR = Path(os.getenv("CACHE_DIR", "/app/cache"))
-CACHE_DIR.mkdir(parents=True, exist_ok=True)
+
+# Select a writable cache directory. Prefer env, fallback to /tmp.
+def _init_cache_dir() -> Path:
+    prefer = os.getenv("CACHE_DIR", "/tmp")
+    p = Path(prefer)
+    try:
+        p.mkdir(parents=True, exist_ok=True)
+        # attempt a tiny write test to ensure writable
+        test_file = p / ".write_test"
+        test_file.write_text("ok")
+        test_file.unlink(missing_ok=True)
+        return p
+    except Exception:
+        # last resort, use /tmp
+        fallback = Path("/tmp")
+        fallback.mkdir(parents=True, exist_ok=True)
+        return fallback
+
+CACHE_DIR = _init_cache_dir()
 
 # Reference input files (local defaults; may be overridden by S3)
 STATIONS_CSV = RESULT_DIR / "master_stations.csv"  # station_id, station_name, lat, lng, ...
@@ -186,10 +203,10 @@ def count_points_within_buffer(points_gdf: gpd.GeoDataFrame, buffer_gdf_m: gpd.G
 
 def load_geodataframes() -> Tuple[gpd.GeoDataFrame, gpd.GeoDataFrame, gpd.GeoDataFrame, gpd.GeoDataFrame]:
     """Load bike routes (lines), street centerlines (lines), rail stations (points), bus stops (points)."""
-    bike_routes_path = _resolve_path(BIKE_ROUTES_GEOJSON, DATA_S3_PREFIX, "data/" + BIKE_ROUTES_GEOJSON.name)
-    street_centerlines_path = _resolve_path(STREET_CENTERLINES_GEOJSON, DATA_S3_PREFIX, "data/" + STREET_CENTERLINES_GEOJSON.name)
-    rail_stations_path = _resolve_path(RAIL_STATIONS_GEOJSON, DATA_S3_PREFIX, "data/" + RAIL_STATIONS_GEOJSON.name)
-    bus_stops_path = _resolve_path(BUS_STOPS_GEOJSON, DATA_S3_PREFIX, "data/" + BUS_STOPS_GEOJSON.name)
+    bike_routes_path = _resolve_path(BIKE_ROUTES_GEOJSON, DATA_S3_PREFIX, BIKE_ROUTES_GEOJSON.name)
+    street_centerlines_path = _resolve_path(STREET_CENTERLINES_GEOJSON, DATA_S3_PREFIX, STREET_CENTERLINES_GEOJSON.name)
+    rail_stations_path = _resolve_path(RAIL_STATIONS_GEOJSON, DATA_S3_PREFIX, RAIL_STATIONS_GEOJSON.name)
+    bus_stops_path = _resolve_path(BUS_STOPS_GEOJSON, DATA_S3_PREFIX, BUS_STOPS_GEOJSON.name)
 
     bike_routes = gpd.read_file(bike_routes_path)
     street_centerlines = gpd.read_file(street_centerlines_path)
@@ -252,7 +269,8 @@ def arcgis_count_points_in_buffer(lat: float, lng: float, radius_m: float, timeo
 def join_census(lat: float, lng: float) -> Dict[str, float]:
     """Spatially join point to census tract and extract variables used in training (if present)."""
     gdf_pt = gpd.GeoDataFrame({"id": [1]}, geometry=[Point(lng, lat)], crs="EPSG:4326")
-    tracts = gpd.read_file(CENSUS_TRACTS_GEOJSON)
+    tracts_path = _resolve_path(CENSUS_TRACTS_GEOJSON, DATA_S3_PREFIX, CENSUS_TRACTS_GEOJSON.name)
+    tracts = gpd.read_file(tracts_path)
     if tracts.crs is None:
         tracts.set_crs("EPSG:4269", inplace=True)
     tracts = tracts.to_crs("EPSG:4326")
@@ -316,8 +334,12 @@ def build_month_rows(year: int) -> List[Tuple[int, Dict[str, int]]]:
 
 def align_to_training_schema(df_features: pd.DataFrame) -> Tuple[pd.DataFrame, List[str]]:
     """Align feature columns to the training preprocessed schema: drop extras, add missing=0."""
-    schema_path = _resolve_path(TRAIN_PREP_CSV, DATA_S3_PREFIX, "result/training_dataset_preprocessed.csv")
-    train = pd.read_csv(schema_path, nrows=100)
+    try:
+        schema_path = _resolve_path(TRAIN_PREP_CSV, DATA_S3_PREFIX, "data/training_dataset_preprocessed.csv")
+        train = pd.read_csv(schema_path, nrows=100)
+    except Exception as e:
+        print(f"Warning: Could not load schema from S3, using local file: {e}")
+        train = pd.read_csv(TRAIN_PREP_CSV, nrows=100)
     expected_cols = [c for c in train.columns if c not in TARGET_COLS + ID_COLS]
 
     # Add missing columns with 0, drop unknowns
@@ -343,7 +365,7 @@ def load_models() -> Dict[str, object]:
 
 def predict_for_point(lat: float, lng: float, year: int) -> pd.DataFrame:
     # Load reference data
-    stations_path = _resolve_path(STATIONS_CSV, DATA_S3_PREFIX, "result/master_stations.csv")
+    stations_path = _resolve_path(STATIONS_CSV, DATA_S3_PREFIX, "master_stations.csv")
     stations_df = pd.read_csv(stations_path)
 
     # Compute static features independent of month
