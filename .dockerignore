@@ -1,0 +1,28 @@
+# Ignore everything by default
+*
+
+# Only include what we need
+!app.py
+!requirements.txt
+!code/inference.py
+!Dockerfile
+
+# Exclude large directories
+data/
+result/
+trip/
+.venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.ipynb
+.git/
+.gitignore
+README.md
+*.md
+
+# Exclude test files
+test_*
+*_test.py

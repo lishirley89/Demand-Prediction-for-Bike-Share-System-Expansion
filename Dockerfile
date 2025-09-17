@@ -25,11 +25,9 @@ COPY requirements.txt /app/requirements.txt
 RUN python -m pip install --upgrade pip && \
     pip install --no-cache-dir -r /app/requirements.txt
 
-# Copy project code
-COPY code /app/code
-COPY result /app/result
-COPY data /app/data
+# Copy only essential code
 COPY app.py /app/app.py
+COPY code/inference.py /app/code/inference.py
 
 # Expose port for the FastAPI app
 EXPOSE 8080
