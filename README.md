@@ -64,9 +64,6 @@ The models predict four key metrics:
 
 ## Feature Engineering
 
-### Temporal Features
-- **Month indicators**: One-hot encoded seasonal patterns
-
 ### Spatial Features
 - **Station density**: Nearby station counts at multiple distance bands
 - **Infrastructure proximity**: Rail stops, bus stops, bike routes within buffers
@@ -101,9 +98,6 @@ The models predict four key metrics:
 
 ### Model Performance Comparison
 ![Model Performance](result/model_performance_comparison.png)
-
-### Feature Importance Analysis
-![Feature Importance](result/feature_importance_top15.png)
 
 
 ## Key Insights
