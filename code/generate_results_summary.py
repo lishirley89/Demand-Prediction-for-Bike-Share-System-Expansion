@@ -20,7 +20,7 @@ def generate_summary():
     print("="*60)
     
     # Model Performance Summary
-    print("\n📊 MODEL PERFORMANCE SUMMARY")
+    print("\nMODEL PERFORMANCE SUMMARY")
     print("-" * 40)
     
     if (result_dir / 'xgboost_results.csv').exists():
@@ -44,7 +44,7 @@ def generate_summary():
             print(f"    Test MAE: {row['test_mae']:.3f}")
     
     # Data Summary
-    print("\n📈 DATA SUMMARY")
+    print("\nDATA SUMMARY")
     print("-" * 40)
     
     if (result_dir / 'station_analysis_summary.csv').exists():
@@ -61,7 +61,7 @@ def generate_summary():
         print(f"Peak active stations: {monthly_data['active_stations'].max()}")
     
     # Available Files
-    print("\n📁 AVAILABLE FILES")
+    print("\nAVAILABLE FILES")
     print("-" * 40)
     
     file_categories = {
@@ -82,13 +82,13 @@ def generate_summary():
                     file_path = result_dir / file
                     if file_path.exists():
                         size = file_path.stat().st_size
-                        print(f"  ✓ {file} ({size:,} bytes)")
+                        print(f"  {file} ({size:,} bytes)")
                 else:
                     size = file.stat().st_size
-                    print(f"  ✓ {file.name} ({size:,} bytes)")
+                    print(f"  {file.name} ({size:,} bytes)")
     
     # Top Features
-    print("\n🔍 TOP PREDICTORS")
+    print("\nTOP PREDICTORS")
     print("-" * 40)
     
     if (result_dir / 'feature_importance.csv').exists():

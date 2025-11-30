@@ -26,7 +26,6 @@ def load_nhgis_data(file_path):
     """
     print(f"Loading NHGIS data from: {file_path}")
     
-    # Load the data
     df = pd.read_csv(file_path, low_memory=False)
     
     print(f"Loaded {len(df):,} census tracts")
@@ -51,7 +50,6 @@ def load_tract_shapefile():
             print(f"Error: Shapefile not found at {shapefile_path}")
             return None
         
-        # Read the shapefile
         gdf = gpd.read_file(shapefile_path)
         
         print(f"Loaded {len(gdf)} census tracts from shapefile")
@@ -82,7 +80,6 @@ def filter_cook_county(df):
     """
     print("\nFiltering for Cook County...")
     
-    # Filter for Cook County
     cook_county = df[df['COUNTY'] == 'Cook County'].copy()
     
     print(f"Found {len(cook_county):,} Cook County census tracts")
@@ -106,10 +103,8 @@ def merge_shapefile_with_nhgis(shapefile_gdf, nhgis_df):
         print("No shapefile data available for merging")
         return None
     
-    # Create a copy to avoid modifying original
     merged_gdf = shapefile_gdf.copy()
     
-    # Check what columns are available for merging
     print(f"Shapefile columns: {list(merged_gdf.columns)}")
     print(f"NHGIS columns: {list(nhgis_df.columns)}")
     
@@ -119,10 +114,8 @@ def merge_shapefile_with_nhgis(shapefile_gdf, nhgis_df):
     # Strategy 1: Merge on GEOID
     if 'GEOID' in merged_gdf.columns and 'GEO_ID' in nhgis_df.columns:
         print("Attempting merge on GEOID...")
-        # Clean up GEO_ID to match GEOID format
         nhgis_df['GEOID_clean'] = nhgis_df['GEO_ID'].str.replace('1400000US', '')
         
-        # Merge on cleaned GEOID
         merged_gdf = merged_gdf.merge(
             nhgis_df, 
             left_on='GEOID', 
@@ -130,7 +123,6 @@ def merge_shapefile_with_nhgis(shapefile_gdf, nhgis_df):
             how='inner'
         )
         
-        # Drop the temporary column
         merged_gdf = merged_gdf.drop('GEOID_clean', axis=1)
         merge_successful = True
         print(f"Successfully merged on GEOID: {len(merged_gdf)} tracts")
@@ -138,11 +130,9 @@ def merge_shapefile_with_nhgis(shapefile_gdf, nhgis_df):
     # Strategy 2: Merge on TRACTCE (tract code)
     elif 'TRACTCE' in merged_gdf.columns and 'TRACTA' in nhgis_df.columns:
         print("Attempting merge on tract code...")
-        # Clean up tract codes for matching
         merged_gdf['TRACTCE_clean'] = merged_gdf['TRACTCE'].astype(str).str.zfill(6)
         nhgis_df['TRACTA_clean'] = nhgis_df['TRACTA'].astype(str).str.zfill(6)
         
-        # Merge on tract codes
         merged_gdf = merged_gdf.merge(
             nhgis_df, 
             left_on='TRACTCE_clean', 
@@ -150,7 +140,6 @@ def merge_shapefile_with_nhgis(shapefile_gdf, nhgis_df):
             how='inner'
         )
         
-        # Drop temporary columns
         merged_gdf = merged_gdf.drop(['TRACTCE_clean', 'TRACTA_clean'], axis=1)
         merge_successful = True
         print(f"Successfully merged on tract code: {len(merged_gdf)} tracts")
@@ -158,11 +147,9 @@ def merge_shapefile_with_nhgis(shapefile_gdf, nhgis_df):
     # Strategy 3: Merge on county and tract combination
     elif 'COUNTYFP' in merged_gdf.columns and 'TRACTA' in nhgis_df.columns:
         print("Attempting merge on county + tract combination...")
-        # Create composite key
         merged_gdf['COUNTY_TRACT'] = merged_gdf['COUNTYFP'].astype(str) + merged_gdf['TRACTCE'].astype(str).str.zfill(6)
         nhgis_df['COUNTY_TRACT'] = nhgis_df['COUNTYA'].astype(str) + nhgis_df['TRACTA'].astype(str).str.zfill(6)
         
-        # Merge on composite key
         merged_gdf = merged_gdf.merge(
             nhgis_df, 
             left_on='COUNTY_TRACT', 
@@ -170,7 +157,6 @@ def merge_shapefile_with_nhgis(shapefile_gdf, nhgis_df):
             how='inner'
         )
         
-        # Drop temporary column
         merged_gdf = merged_gdf.drop('COUNTY_TRACT', axis=1)
         merge_successful = True
         print(f"Successfully merged on county+tract: {len(merged_gdf)} tracts")
@@ -182,7 +168,6 @@ def merge_shapefile_with_nhgis(shapefile_gdf, nhgis_df):
         print(f"NHGIS: {[col for col in nhgis_df.columns if col in ['GEO_ID', 'TRACTA', 'COUNTYA', 'NAME_E']]}")
         return None
     
-    # Filter for Cook County only
     if 'COUNTY' in merged_gdf.columns:
         merged_gdf = merged_gdf[merged_gdf['COUNTY'] == 'Cook County'].copy()
         print(f"Filtered to {len(merged_gdf)} Cook County tracts")
@@ -201,7 +186,6 @@ def calculate_requested_variables(df):
     """
     print("\nCalculating requested variables...")
     
-    # Create a copy to avoid modifying original
     result = df.copy()
     
     # a. % white
@@ -277,7 +261,6 @@ def calculate_requested_variables(df):
         result['housing_density_sq_meter'] = (result['ASS7E001'] / result['land_area_sq_meters']).round(6)
     
     # Additional useful variables
-    # Total population
     result['total_population'] = result['ASN1E001']
     
     # Per capita income (available in this dataset)
@@ -320,22 +303,17 @@ def create_summary_statistics(df):
     """
     print("\nCreating summary statistics...")
     
-    # Select only the calculated demographic variables
     demographic_cols = [col for col in df.columns if col.startswith('pct_') or 
                        col in ['total_population', 'population_density_sq_meter', 'land_area_sq_meters',
                                'housing_density', 'housing_density_sq_meter', 'per_capita_income', 
                                'unemployment_rate', 'employment_rate', 'labor_force_participation_rate']]
     
-    # Filter out columns that don't exist
     demographic_cols = [col for col in demographic_cols if col in df.columns]
     
-    # Create summary statistics
     summary = df[demographic_cols].describe()
     
-    # Add count of non-null values
     summary.loc['count'] = df[demographic_cols].count()
     
-    # Add count of census tracts
     summary.loc['census_tracts'] = len(df)
     
     return summary
@@ -351,17 +329,14 @@ def save_results(gdf, summary, output_dir):
     """
     print(f"\nSaving results to: {output_dir}")
     
-    # Create output directory if it doesn't exist
     Path(output_dir).mkdir(parents=True, exist_ok=True)
     
-    # Define key variables for the clean GeoJSON
     key_vars = ['GEOID', 'TRACTCE', 'NAME', 'total_population', 
                 'pct_white', 'pct_black', 'pct_asian', 'pct_indian', 'pct_hawaiian', 'pct_two_or_more_races',
                 'pct_hispanic', 'pct_female', 'pct_young_adults_20_34', 'pct_zero_car_ownership',
                 'unemployment_rate', 'pct_bachelors_plus', 'pct_drive_alone', 'pct_bike_to_work', 
                 'pct_walk_to_work', 'housing_density', 'per_capita_income']
     
-    # Add land area and density columns if available
     if 'land_area_sq_meters' in gdf.columns:
         key_vars.extend(['land_area_sq_meters'])
     if 'population_density_sq_meter' in gdf.columns:
@@ -369,28 +344,22 @@ def save_results(gdf, summary, output_dir):
     if 'housing_density_sq_meter' in gdf.columns:
         key_vars.extend(['housing_density_sq_meter'])
     
-    # Filter to only include columns that exist
     key_vars = [col for col in key_vars if col in gdf.columns]
     
-    # Create clean GeoJSON with only key variables and geometry
     clean_gdf = gdf[['geometry'] + key_vars].copy()
     
-    # Save as GeoJSON (main output) - clean version with only key variables
     geojson_file = os.path.join(output_dir, 'cook_county_census_tracts.geojson')
     clean_gdf.to_file(geojson_file, driver='GeoJSON')
     print(f"Clean GeoJSON file saved to: {geojson_file} (geometry + key variables only)")
     
-    # Save full processed data as CSV (without geometry)
     csv_file = os.path.join(output_dir, 'cook_county_census_tracts_processed.csv')
     gdf.drop(columns=['geometry']).to_csv(csv_file, index=False)
     print(f"Full CSV file saved to: {csv_file}")
     
-    # Save summary statistics
     summary_file = os.path.join(output_dir, 'cook_county_summary_statistics.csv')
     summary.to_csv(summary_file)
     print(f"Summary statistics saved to: {summary_file}")
     
-    # Save a simplified version with key variables (CSV without geometry)
     simplified_file = os.path.join(output_dir, 'cook_county_key_variables.csv')
     clean_gdf.drop(columns=['geometry']).to_csv(simplified_file, index=False)
     print(f"Key variables CSV saved to: {simplified_file}")

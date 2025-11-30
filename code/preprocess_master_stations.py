@@ -37,12 +37,10 @@ def create_training_dataset(input_file, output_file):
     print(f"Removed {repair_count} stations containing 'repair' in either name or ID")
     print(f"Stations remaining after removing 'repair': {len(df_final)}")
     
-    # Summary of removals
     total_removed = initial_count - len(df_final)
     print(f"\nTotal stations removed: {total_removed}")
     print(f"Final training dataset size: {len(df_final)}")
     
-    # Save the filtered dataset
     print(f"\nSaving training dataset to: {output_file}")
     df_final.to_csv(output_file, index=False)
     print("Training dataset created successfully!")
@@ -50,18 +48,14 @@ def create_training_dataset(input_file, output_file):
     return df_final
 
 def main():
-    # Define file paths
     input_file = "result/master_stations.csv"
     output_file = "result/master_stations_fortraining.csv"
     
-    # Create the result directory if it doesn't exist
     import os
     os.makedirs(os.path.dirname(output_file), exist_ok=True)
     
-    # Create the training dataset
     training_df = create_training_dataset(input_file, output_file)
     
-    # Display first few rows of the training dataset
     print("\nFirst 5 rows of training dataset:")
     print(training_df[['station_id', 'station_name']].head())
 
