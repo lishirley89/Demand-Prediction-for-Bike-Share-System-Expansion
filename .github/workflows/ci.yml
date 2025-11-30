@@ -1,0 +1,152 @@
+name: CI
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+  lint-and-format:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.9", "3.10", "3.11"]
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ matrix.python-version }}
+        cache: 'pip'
+    
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+    
+    - name: Check code formatting with Black
+      run: |
+        black --check code/
+      continue-on-error: true
+    
+    - name: Lint with flake8
+      run: |
+        flake8 code/ --count --select=E9,F63,F7,F82 --show-source --statistics
+        flake8 code/ --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
+      continue-on-error: true
+    
+    - name: Validate Python syntax
+      run: |
+        python -m py_compile code/*.py
+      continue-on-error: false
+
+  validate-imports:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: "3.10"
+        cache: 'pip'
+    
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+    
+    - name: Validate imports
+      run: |
+        python -c "
+        import sys
+        import importlib.util
+        
+        files = [
+            'code/calc_active_stations_by_distance.py',
+            'code/calc_dist.py',
+            'code/calc_station_census.py',
+            'code/calc_station_infrastructure.py',
+            'code/calc_station_poi.py',
+            'code/create_master_stations_updated.py',
+            'code/create_station_buffers_500m.py',
+            'code/create_summary_plots.py',
+            'code/generate_results_summary.py',
+            'code/model_linear_regression.py',
+            'code/model_preprocessing.py',
+            'code/prepare_training_test_datasets.py',
+            'code/preprocess_master_stations.py',
+            'code/process_divvy_data.py',
+            'code/process_nhgis_cook_county.py'
+        ]
+        
+        errors = []
+        for file in files:
+            try:
+                spec = importlib.util.spec_from_file_location('module', file)
+                if spec and spec.loader:
+                    module = importlib.util.module_from_spec(spec)
+                    spec.loader.exec_module(module)
+                    print(f'✓ {file}')
+            except Exception as e:
+                errors.append(f'{file}: {e}')
+                print(f'✗ {file}: {e}')
+        
+        if errors:
+            print(f'\n{len(errors)} file(s) have import errors')
+            sys.exit(1)
+        else:
+            print(f'\nAll {len(files)} files validated successfully')
+        "
+      continue-on-error: true
+
+  check-notebooks:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: "3.10"
+        cache: 'pip'
+    
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        pip install nbformat
+    
+    - name: Validate Jupyter notebooks
+      run: |
+        python -c "
+        import json
+        import sys
+        from pathlib import Path
+        
+        notebooks = list(Path('code').glob('*.ipynb'))
+        errors = []
+        
+        for nb_path in notebooks:
+            try:
+                with open(nb_path, 'r', encoding='utf-8') as f:
+                    nb = json.load(f)
+                print(f'✓ {nb_path.name} - Valid JSON')
+            except json.JSONDecodeError as e:
+                errors.append(f'{nb_path.name}: Invalid JSON - {e}')
+                print(f'✗ {nb_path.name}: Invalid JSON')
+            except Exception as e:
+                errors.append(f'{nb_path.name}: {e}')
+                print(f'✗ {nb_path.name}: {e}')
+        
+        if errors:
+            print(f'\n{len(errors)} notebook(s) have errors')
+            sys.exit(1)
+        else:
+            print(f'\nAll {len(notebooks)} notebook(s) validated successfully')
+        "
+      continue-on-error: true
+

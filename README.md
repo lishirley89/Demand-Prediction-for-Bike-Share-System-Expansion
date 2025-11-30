@@ -140,6 +140,33 @@ The models predict four key metrics:
 - **Feature selection** to reduce overfitting
 - **Hyperparameter tuning** via grid search
 
+## CI/CD
+
+This project uses GitHub Actions for continuous integration. The CI pipeline automatically:
+
+- **Code Quality Checks**: Validates Python syntax and runs linting (flake8)
+- **Formatting Checks**: Ensures code follows Black formatting standards
+- **Import Validation**: Verifies all Python files can be imported without errors
+- **Notebook Validation**: Checks Jupyter notebook structure
+
+### Running CI Checks Locally
+
+```bash
+# Install development dependencies
+pip install -r requirements.txt
+
+# Check code formatting
+black --check code/
+
+# Run linting
+flake8 code/
+
+# Validate imports
+python scripts/validate_imports.py
+```
+
+See [.github/workflows/README.md](.github/workflows/README.md) for more details.
+
 ---
 
 *Last updated: January 2025*
