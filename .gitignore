@@ -46,7 +46,6 @@ data/*.prj
 data/*.cpg
 data/*.xml
 trip/*.csv
-result/*.csv
 result/*.html
 result/*.png
 result/*.joblib
