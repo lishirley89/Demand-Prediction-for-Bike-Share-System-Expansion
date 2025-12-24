@@ -445,6 +445,7 @@ Examples:
         total = len(h3_df)
 
         for idx, row in h3_df.iterrows():
+            print(f"Processing {idx + 1}/{total}: H3 {row['h3_index']}")
             h3_index = row['h3_index']
             lat = row['lat']
             lng = row['lng']
@@ -480,13 +481,6 @@ Examples:
         print(f"Saved {len(final_df)} predictions to {output_path}")
         print(f"Total locations: {len(all_results)}")
         print(f"Total predictions (12 months × locations): {len(final_df)}")
-
-        # Print summary statistics
-        print("\nSummary Statistics:")
-        print(f"  cbike_start - Mean: {final_df['cbike_start'].mean():.2f}, Max: {final_df['cbike_start'].max():.2f}")
-        print(f"  cbike_end - Mean: {final_df['cbike_end'].mean():.2f}, Max: {final_df['cbike_end'].max():.2f}")
-        print(f"  ebike_start - Mean: {final_df['ebike_start'].mean():.2f}, Max: {final_df['ebike_start'].max():.2f}")
-        print(f"  ebike_end - Mean: {final_df['ebike_end'].mean():.2f}, Max: {final_df['ebike_end'].max():.2f}")
 
     except Exception as e:
         print(f"Error: {e}", file=sys.stderr)
