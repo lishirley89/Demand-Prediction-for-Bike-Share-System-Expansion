@@ -8,7 +8,16 @@ This project aims to predict the trip demand at new stations when bike share sys
 
 ## Project Overview
 
-This project develops predictive models for bike share station demand by integrating multiple data sources including:
+This project develops predictive models for bike share station demand by integrating multiple data sources. The models can predict demand at any location in Chicago, enabling data-driven decisions for system expansion.
+
+### Key Capabilities
+- **Location-Based Predictions**: Predict demand at any coordinate in Chicago
+- **12-Month Forecasts**: Monthly predictions for classic and electric bikes
+- **City-Wide Coverage**: Pre-computed predictions for 810 H3 cells across Chicago
+- **Interactive Exploration**: Web app for visualizing predictions on a map
+
+### Data Sources
+The models integrate multiple data sources including:
 - **Divvy bike share trip data** (2021-2025)
 - **Census demographic data** (Cook County)
 - **Points of Interest (POI) data** from OpenStreetMap
@@ -94,7 +103,28 @@ The models predict four key metrics:
 - **RMSE**: Root mean square error
 - **MAE**: Mean absolute error
 
-## Visualizations
+## Interactive Visualization
+
+### Streamlit Web Application
+
+The project includes an interactive web application built with Streamlit that allows users to explore predictions across Chicago:
+
+- **Interactive Map**: Click anywhere on the map to see demand predictions for that location
+- **H3 Spatial Indexing**: Uses H3 resolution 8 cells (~0.46 km² each) for city-wide coverage
+- **12-Month Predictions**: Visualizes average daily trips for each month
+- **Four Metrics**: Displays predictions for classic bike starts/ends and e-bike starts/ends
+
+#### Running the App
+
+```bash
+# Install dependencies
+pip install -r requirements.txt
+
+# Run the Streamlit app
+streamlit run app/app.py
+```
+
+The app loads pre-computed predictions for all H3 cells covering Chicago, enabling instant exploration of demand patterns across the entire city.
 
 ### Model Performance Comparison
 ![Model Performance](result/model_performance_comparison.png)
@@ -122,6 +152,8 @@ The models predict four key metrics:
 - **Features**: 64 engineered features per station-month
 - **Training Samples**: ~80,000 station-month observations
 - **Test Samples**: ~20,000 station-month observations
+- **City-Wide Predictions**: 810 H3 cells covering Chicago (resolution 8)
+- **Prediction Coverage**: 12 months × 4 metrics × 810 locations = 38,880 predictions
 
 
 ## Technical Details
@@ -135,10 +167,16 @@ The models predict four key metrics:
   - Colsample by tree: 0.8-0.9
 
 ### Performance Optimization
-- **GPU acceleration** for XGBoost training
 - **Cross-validation** for robust performance estimation
 - **Feature selection** to reduce overfitting
 - **Hyperparameter tuning** via grid search
+- **Cyclic month encoding** (sin/cos) for better seasonal pattern capture
+
+### Spatial Prediction Pipeline
+- **H3 Grid Generation**: Creates uniform spatial cells across Chicago (resolution 8)
+- **Batch Inference**: Processes all H3 cells to generate city-wide predictions
+- **Feature Engineering**: Applies same feature pipeline to candidate locations
+- **Model Deployment**: XGBoost models saved as joblib files for inference
 
 ## CI/CD
 

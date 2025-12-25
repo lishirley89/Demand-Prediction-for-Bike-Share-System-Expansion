@@ -37,25 +37,31 @@ env/
 .ipynb_checkpoints
 
 # Data files (large)
-data/*.csv
-data/*.geojson
-data/*.shp
-data/*.shx
-data/*.dbf
-data/*.prj
-data/*.cpg
-data/*.xml
-trip/*.csv
+data/**/*.csv
+data/**/*.geojson
+data/**/*.shp
+data/**/*.shx
+data/**/*.dbf
+data/**/*.prj
+data/**/*.cpg
+data/**/*.xml
+data/**/*.txt
+trip/**/*.csv
 result/*.html
 result/*.png
 result/*.joblib
 result/*.geojson
 result/*.txt
+result/*.csv
 
 # Keep directory structure but ignore large files
 !data/.gitkeep
 !trip/.gitkeep
 !result/.gitkeep
+
+# Keep specific small result files that are needed
+!result/chicago_h3_predictions_res8.csv
+!result/chicago_h3_res8.csv
 
 # OS
 .DS_Store
