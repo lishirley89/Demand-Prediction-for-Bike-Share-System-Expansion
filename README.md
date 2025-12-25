@@ -126,9 +126,6 @@ streamlit run app/app.py
 
 The app loads pre-computed predictions for all H3 cells covering Chicago, enabling instant exploration of demand patterns across the entire city.
 
-### Model Performance Comparison
-![Model Performance](result/model_performance_comparison.png)
-
 
 ## Key Insights
 
@@ -186,22 +183,6 @@ This project uses GitHub Actions for continuous integration. The CI pipeline aut
 - **Formatting Checks**: Ensures code follows Black formatting standards
 - **Import Validation**: Verifies all Python files can be imported without errors
 - **Notebook Validation**: Checks Jupyter notebook structure
-
-### Running CI Checks Locally
-
-```bash
-# Install development dependencies
-pip install -r requirements.txt
-
-# Check code formatting
-black --check code/
-
-# Run linting
-flake8 code/
-
-# Validate imports
-python scripts/validate_imports.py
-```
 
 See [.github/workflows/README.md](.github/workflows/README.md) for more details.
 
