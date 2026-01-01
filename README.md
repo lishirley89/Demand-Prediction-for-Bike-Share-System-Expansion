@@ -52,7 +52,7 @@ The models predict four key metrics:
 ### Key Findings
 
 1. **XGBoost significantly outperforms Linear Regression** across all target variables
-2. **Electric bike demand is more predictable** than classic bike demand (R² > 0.89 vs ~0.80)
+2. **Electric bike demand is more predictable** than classic bike demand (RMSE<3 vs ~6)
 3. **Seasonal patterns are critical** - month features rank among top predictors
 4. **Socioeconomic factors matter** - per capita income and demographic composition are highly influential
 5. **Infrastructure proximity** - nearby stations and transportation access significantly impact demand
@@ -103,7 +103,6 @@ The models predict four key metrics:
 2. **XGBoost**: Gradient boosting with hyperparameter optimization
 
 ### Evaluation Metrics
-- **R²**: Coefficient of determination
 - **RMSE**: Root mean square error
 - **MAE**: Mean absolute error
 
